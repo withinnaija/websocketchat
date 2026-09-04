@@ -11,12 +11,28 @@ export const getUser = router.get(
   async (req, res, next) => {
     try {
       const id = req.user.userId;
-      console.log("from user controller", req.user);
       const user = await User.findById({ _id: id });
       res.status(200).json({
         message: "user fetch successfully",
         success: true,
         data: user,
+      });
+    } catch (error) {
+      next(new AppError("internal server error ", 500));
+    }
+  },
+);
+
+export const getAllUsers = router.get(
+  "/get-all-users",
+  authmiddleware,
+  async (req, res, next) => {
+    try {
+      const users = await User.find();
+      res.status(200).json({
+        message: "users fetch successfully",
+        success: true,
+        data: users,
       });
     } catch (error) {
       next(new AppError("internal server error ", 500));
