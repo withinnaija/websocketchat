@@ -1,8 +1,8 @@
-import express from "express";
+import express, { json } from "express";
 import AppError from "../utils/appError.js";
 import User from "../model/user.js";
 import bcrypt from "bcryptjs";
-import { JsonWebTokenError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -28,9 +28,7 @@ export const signUp = router.post("/signup", async (req, res, next) => {
       status: "success",
       email: newUser.email,
     });
-    next();
   } catch (error) {
-    console.log(error.message);
     next(new AppError("internal error", 500));
   }
 });
@@ -48,9 +46,20 @@ export const login = router.post("/login", async (req, res, next) => {
       return next(new AppError("incorrect password", 401));
     }
 
-    next();
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+    res.status(200).json({
+      message: "successfully login",
+      success: true,
+      token: token,
+      user: {
+        email: user.email,
+      },
+    });
   } catch (error) {
     next(new AppError("internal server error", 500));
+    console.log(error.message);
   }
 });
 
