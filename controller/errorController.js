@@ -5,6 +5,7 @@ const globalErrorHandling = (err, req, res, next) => {
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
+    // error: err.stack,
   });
 };
 export default globalErrorHandling;
