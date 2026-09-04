@@ -55,6 +55,7 @@ export const login = router.post("/login", async (req, res, next) => {
       token: token,
       user: {
         email: user.email,
+        userId: user._id,
       },
     });
   } catch (error) {
